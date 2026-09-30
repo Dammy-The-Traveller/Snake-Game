@@ -1,4 +1,5 @@
 # Snake Game
+<img width="1886" height="853" alt="Screenshot From 2026-09-30 15-10-39" src="https://github.com/user-attachments/assets/e6814040-06f1-42e1-a989-e05b13805a8e" />
 
 A simple browser-based Snake game built with HTML, CSS, and JavaScript.
 
