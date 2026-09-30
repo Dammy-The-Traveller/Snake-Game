@@ -143,6 +143,20 @@ let KEY = {
   ArrowRight: false,
   ArrowDown: false,
   ArrowLeft: false,
+  setDirection(key) {
+    const oppositeMap = {
+      ArrowUp: "ArrowDown",
+      ArrowDown: "ArrowUp",
+      ArrowLeft: "ArrowRight",
+      ArrowRight: "ArrowLeft"
+    };
+
+    if (!Object.prototype.hasOwnProperty.call(this, key)) return;
+    if (oppositeMap[key] && this[oppositeMap[key]]) return;
+
+    this.resetState();
+    this[key] = true;
+  },
   resetState() {
     this.ArrowUp = false;
     this.ArrowRight = false;
@@ -153,19 +167,51 @@ let KEY = {
     addEventListener(
       "keydown",
       (e) => {
-        if (e.key === "ArrowUp" && this.ArrowDown) return;
-        if (e.key === "ArrowDown" && this.ArrowUp) return;
-        if (e.key === "ArrowLeft" && this.ArrowRight) return;
-        if (e.key === "ArrowRight" && this.ArrowLeft) return;
-        this[e.key] = true;
-        Object.keys(this)
-          .filter((f) => f !== e.key && f !== "listen" && f !== "resetState")
-          .forEach((k) => {
-            this[k] = false;
-          });
+        if (!["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) return;
+        e.preventDefault();
+        this.setDirection(e.key);
       },
-      false
+      { passive: false }
     );
+
+    let touchStartX = 0;
+    let touchStartY = 0;
+
+    dom_canvas.addEventListener(
+      "touchstart",
+      (e) => {
+        const touch = e.changedTouches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+      },
+      { passive: true }
+    );
+
+    dom_canvas.addEventListener(
+      "touchend",
+      (e) => {
+        const touch = e.changedTouches[0];
+        const deltaX = touch.clientX - touchStartX;
+        const deltaY = touch.clientY - touchStartY;
+        const threshold = 24;
+
+        if (Math.abs(deltaX) < threshold && Math.abs(deltaY) < threshold) return;
+
+        if (Math.abs(deltaX) > Math.abs(deltaY)) {
+          this.setDirection(deltaX > 0 ? "ArrowRight" : "ArrowLeft");
+        } else {
+          this.setDirection(deltaY > 0 ? "ArrowDown" : "ArrowUp");
+        }
+      },
+      { passive: true }
+    );
+
+    document.querySelectorAll(".touch-btn").forEach((button) => {
+      button.addEventListener("click", () => {
+        const direction = button.dataset.direction;
+        if (direction) this.setDirection(direction);
+      });
+    });
   }
 };
 
