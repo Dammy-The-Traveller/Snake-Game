@@ -16,16 +16,29 @@
   <body>
     <div class="container noselect">
       <div class="wrapper">
-        <button id="replay">
-          <i class="fas fa-play"></i>
-          RESTART
-        </button>
+        <div class="controls-left">
+          <button id="replay">
+            <i class="fas fa-play"></i>
+            RESTART
+          </button>
+          <button id="playPause">
+            <i class="fas fa-pause"></i>
+            PAUSE
+          </button>
+        </div>
         <div id="canvas"></div>
         <div id="ui">
           <h2>SCORE</h2>
           <span id="score">00</span>
         </div>
       </div>
+
+      <div class="difficulty-panel">
+        <button class="difficulty-btn" data-level="easy">EASY</button>
+        <button class="difficulty-btn active" data-level="medium">MEDIUM</button>
+        <button class="difficulty-btn" data-level="hard">HARD</button>
+      </div>
+      <div id="difficulty-indicator">LEVEL: MEDIUM</div>
     </div>
 
     <script src="./script.js"></script>

@@ -1,4 +1,5 @@
 let dom_replay = document.querySelector("#replay");
+let dom_playPause = document.querySelector("#playPause");
 let dom_score = document.querySelector("#score");
 let dom_canvas = document.createElement("canvas");
 document.querySelector("#canvas").appendChild(dom_canvas);
@@ -7,12 +8,20 @@ let CTX = dom_canvas.getContext("2d");
 const W = (dom_canvas.width = 400);
 const H = (dom_canvas.height = 400);
 
+const DIFFICULTY = {
+  easy: 8,
+  medium: 5,
+  hard: 3
+};
+
 let snake,
   food,
   currentHue,
   cells = 20,
   cellSize,
   isGameOver = false,
+  isPaused = false,
+  activeDifficulty = "medium",
   tails = [],
   score = 0,
   maxScore = Number(window.localStorage.getItem("maxScore")) || 0,
@@ -166,7 +175,8 @@ class Snake {
     this.dir = new helpers.Vec(cellSize || W / cells, 0);
     this.type = type;
     this.index = i;
-    this.delay = 5;
+    this.baseDelay = DIFFICULTY[activeDifficulty];
+    this.delay = this.baseDelay;
     this.size = W / cells;
     this.color = "white";
     this.history = [];
@@ -242,7 +252,7 @@ class Snake {
         this.history[i] = this.history[i + 1];
       }
       this.pos.add(this.dir);
-      this.delay = 5;
+      this.delay = this.baseDelay;
       this.total > 3 ? this.selfCollision() : null;
     }
   }
@@ -335,6 +345,48 @@ function clear() {
   CTX.clearRect(0, 0, W, H);
 }
 
+function updateDifficultyButtons() {
+  const indicator = document.querySelector("#difficulty-indicator");
+  document.querySelectorAll(".difficulty-btn").forEach((button) => {
+    const isActive = button.dataset.level === activeDifficulty;
+    button.classList.toggle("active", isActive);
+  });
+
+  if (indicator) {
+    indicator.textContent = `LEVEL: ${activeDifficulty.toUpperCase()}`;
+  }
+}
+
+function updatePauseButton() {
+  if (!dom_playPause) return;
+  const isPlaying = !isPaused;
+  dom_playPause.innerHTML = isPlaying
+    ? '<i class="fas fa-pause"></i> PAUSE'
+    : '<i class="fas fa-play"></i> PLAY';
+}
+
+function setDifficulty(level) {
+  if (!DIFFICULTY[level]) return;
+  activeDifficulty = level;
+  if (snake) {
+    snake.baseDelay = DIFFICULTY[level];
+    snake.delay = snake.baseDelay;
+  }
+  updateDifficultyButtons();
+}
+
+function togglePause() {
+  if (isGameOver) return;
+  isPaused = !isPaused;
+  updatePauseButton();
+
+  if (!isPaused) {
+    loop();
+  } else {
+    clearTimeout(requestID);
+  }
+}
+
 function initialize() {
   CTX.imageSmoothingEnabled = false;
   KEY.listen();
@@ -343,13 +395,18 @@ function initialize() {
   snake = new Snake();
   food = new Food();
   dom_replay.addEventListener("click", reset, false);
+  dom_playPause.addEventListener("click", togglePause, false);
+  document.querySelectorAll(".difficulty-btn").forEach((button) => {
+    button.addEventListener("click", () => setDifficulty(button.dataset.level));
+  });
+  updateDifficultyButtons();
+  updatePauseButton();
   loop();
 }
 
 function loop() {
   clear();
-  if (!isGameOver) {
-    requestID = setTimeout(loop, 1000 / 60);
+  if (!isGameOver && !isPaused) {
     helpers.drawGrid();
     snake.update();
     food.draw();
@@ -357,7 +414,8 @@ function loop() {
       p.update();
     }
     helpers.garbageCollector();
-  } else {
+    requestID = setTimeout(loop, 1000 / 60);
+  } else if (isGameOver) {
     clear();
     gameOver();
   }
@@ -386,10 +444,12 @@ function reset() {
   score = 0;
   KEY.resetState();
   KEY.ArrowRight = true;
+  isGameOver = false;
+  isPaused = false;
+  updatePauseButton();
   snake = new Snake();
   food = new Food();
   food.spawn();
-  isGameOver = false;
   clearTimeout(requestID);
   loop();
 }
