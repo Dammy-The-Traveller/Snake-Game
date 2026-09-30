@@ -14,8 +14,8 @@ let snake,
   cellSize,
   isGameOver = false,
   tails = [],
-  score = 00,
-  maxScore = window.localStorage.getItem("maxScore") || undefined,
+  score = 0,
+  maxScore = Number(window.localStorage.getItem("maxScore")) || 0,
   particles = [],
   splashingParticleCount = 20,
   cellsCount,
@@ -163,7 +163,7 @@ let KEY = {
 class Snake {
   constructor(i, type) {
     this.pos = new helpers.Vec(W / 2, H / 2);
-    this.dir = new helpers.Vec(0, 0);
+    this.dir = new helpers.Vec(cellSize || W / cells, 0);
     this.type = type;
     this.index = i;
     this.delay = 5;
@@ -270,13 +270,17 @@ class Food {
   spawn() {
     let randX = ~~(Math.random() * cells) * this.size;
     let randY = ~~(Math.random() * cells) * this.size;
-    for (let path of snake.history) {
-      if (helpers.isCollision(new helpers.Vec(randX, randY), path)) {
+    const nextFoodPos = new helpers.Vec(randX, randY);
+    const snakePositions = [snake.pos, ...snake.history];
+
+    for (let path of snakePositions) {
+      if (helpers.isCollision(nextFoodPos, path)) {
         return this.spawn();
       }
     }
+
     this.color = currentHue = `hsl(${helpers.randHue()}, 100%, 50%)`;
-    this.pos = new helpers.Vec(randX, randY);
+    this.pos = nextFoodPos;
   }
 }
 
@@ -315,7 +319,7 @@ class Particle {
 }
 
 function incrementScore() {
-  score++;
+  score += 1;
   dom_score.innerText = score.toString().padStart(2, "0");
 }
 
@@ -360,9 +364,14 @@ function loop() {
 }
 
 function gameOver() {
-  maxScore ? null : (maxScore = score);
-  score > maxScore ? (maxScore = score) : null;
-  window.localStorage.setItem("maxScore", maxScore);
+  score = Number(score) || 0;
+  maxScore = Number(maxScore) || 0;
+
+  if (score > maxScore) {
+    maxScore = score;
+  }
+
+  window.localStorage.setItem("maxScore", String(maxScore));
   CTX.fillStyle = "#4cffd7";
   CTX.textAlign = "center";
   CTX.font = "bold 30px Poppins, sans-serif";
@@ -374,10 +383,12 @@ function gameOver() {
 
 function reset() {
   dom_score.innerText = "00";
-  score = "00";
-  snake = new Snake();
-  food.spawn();
+  score = 0;
   KEY.resetState();
+  KEY.ArrowRight = true;
+  snake = new Snake();
+  food = new Food();
+  food.spawn();
   isGameOver = false;
   clearTimeout(requestID);
   loop();
