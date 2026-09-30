@@ -50,7 +50,8 @@ canvas {
 .container {
   display: flex;
   width: 100%;
-  height: 100%;
+  min-height: 100vh;
+  padding: 20px 12px 30px;
   flex-flow: column wrap;
   justify-content: center;
   align-items: center;
@@ -153,13 +154,15 @@ h2 {
 }
 
 .touch-btn {
-  width: 52px;
-  height: 52px;
+  width: 72px;
+  height: 72px;
+  min-width: 72px;
+  min-height: 72px;
   border: none;
-  border-radius: 14px;
+  border-radius: 18px;
   background: #6e7888;
   color: #222738;
-  font-size: 26px;
+  font-size: 32px;
   font-weight: 800;
   cursor: pointer;
   display: flex;
@@ -167,6 +170,7 @@ h2 {
   justify-content: center;
   touch-action: manipulation;
   transition: all 200ms ease;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
 }
 
 .touch-btn:active {
@@ -180,24 +184,43 @@ canvas,
 }
 
 @media (max-width: 600px) {
+  .container {
+    padding-bottom: 24px;
+  }
+
   #replay,
   #playPause {
     margin-bottom: 20px;
   }
+
   #replay,
   #playPause,
   h2 {
     transform: rotate(0deg);
   }
+
   #ui {
     flex-flow: row wrap;
     margin-bottom: 20px;
   }
+
   #score {
     margin-top: 0;
     margin-left: 20px;
   }
+
   .container {
     flex-flow: column wrap;
+  }
+
+  .touch-controls {
+    margin-top: 12px;
+  }
+
+  .touch-btn {
+    width: 78px;
+    height: 78px;
+    min-width: 78px;
+    min-height: 78px;
   }
 }

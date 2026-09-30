@@ -2,16 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <title>Snake game</title>
 
     <script
       defer
-      src="https://pro.fontawesome.com/releases/v5.10.0/js/all.js"
+      src="https://pro.fontawesome.com/releases/v5.10.0/js/all.js?v=5.10.0"
       integrity="sha384-G/ZR3ntz68JZrH4pfPJyRbjW+c0+ojii5f+GYiYwldYU69A+Ejat6yIfLSxljXxD"
       crossorigin="anonymous"
     ></script>
 
-    <link rel="stylesheet" href="./style.css" />
+    <script>
+      const cacheBust = Date.now();
+      const styleLink = document.createElement("link");
+      styleLink.rel = "stylesheet";
+      styleLink.href = "./style.css?t=" + cacheBust;
+      document.head.appendChild(styleLink);
+    </script>
   </head>
   <body>
     <div class="container noselect">
@@ -50,6 +57,10 @@
       </div>
     </div>
 
-    <script src="./script.js"></script>
+    <script>
+      const gameScript = document.createElement("script");
+      gameScript.src = "./script.js?t=" + Date.now();
+      document.body.appendChild(gameScript);
+    </script>
   </body>
 </html>
