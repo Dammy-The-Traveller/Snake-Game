@@ -14,7 +14,7 @@ A simple browser-based Snake game built with HTML, CSS, and JavaScript.
 
 ## Demo
 
-Open the project in a browser and play locally.
+Open the project in a browser at https://dammy-the-traveller.github.io/Snake-Game/ and play.
 
 ## Project Structure
 
@@ -28,7 +28,7 @@ Snake-Game-main/
 
 ## How to Run
 
-### Option 1: Local web server (recommended)
+### Option 1: Local web server 
 
 From the project folder, run:
 
@@ -44,7 +44,7 @@ http://localhost:8000
 
 ### Option 2: Open directly in a browser
 
-You can also open `index.html` directly in a browser, but a local web server is recommended for better browser behavior and cache handling.
+You can also open `https://dammy-the-traveller.github.io/Snake-Game/` directly in a browser.
 
 ## Controls
 
@@ -68,7 +68,6 @@ You can also open `index.html` directly in a browser, but a local web server is 
 ## Gameplay
 
 - Eat the glowing food to grow the snake
-- Avoid hitting the walls
 - Avoid colliding with your own body
 - Try to beat your high score
 
@@ -83,5 +82,9 @@ You can also open `index.html` directly in a browser, but a local web server is 
 This project is open for personal and educational use.
 
 ## Author
+
+**Dammy The Traveller**
+- Email: adebesindamilare39@gmail.com
+- Portfolio: [adebesindamilare39@gmail.com](https://damilare-david-adebesin.onrender.com/)
 
 Built as a lightweight browser game project for learning JavaScript and game logic.
